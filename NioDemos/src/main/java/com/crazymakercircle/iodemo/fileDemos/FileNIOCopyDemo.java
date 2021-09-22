@@ -68,25 +68,25 @@ public class FileNIOCopyDemo {
             FileInputStream fis = null;
             FileOutputStream fos = null;
             FileChannel inChannel = null;
-            FileChannel outchannel = null;
+            FileChannel outChannel = null;
             try {
                 fis = new FileInputStream(srcFile);
                 fos = new FileOutputStream(destFile);
                 inChannel = fis.getChannel();
-                outchannel = fos.getChannel();
+                outChannel = fos.getChannel();
 
                 int length = -1;
                 ByteBuffer buf = ByteBuffer.allocate(1024);
-                //从输入通道读取到buf
+                //从输入通道读取到buf，buffer是写入模式
                 while ((length = inChannel.read(buf)) != -1) {
 
-                    //翻转buf,变成成读模式
+                    //翻转buf,变成成读模式，往outChannel中写入数据
                     buf.flip();
 
-                    int outlength = 0;
+                    int outLength = 0;
                     //将buf写入到输出的通道
-                    while ((outlength = outchannel.write(buf)) != 0) {
-                        System.out.println("写入字节数：" + outlength);
+                    while ((outLength = outChannel.write(buf)) != 0) {
+                        System.out.println("写入字节数：" + outLength);
                     }
                     //清除buf,变成写入模式
                     buf.clear();
@@ -94,9 +94,9 @@ public class FileNIOCopyDemo {
 
 
                 //强制刷新磁盘
-                outchannel.force(true);
+                outChannel.force(true);
             } finally {
-                IOUtil.closeQuietly(outchannel);
+                IOUtil.closeQuietly(outChannel);
                 IOUtil.closeQuietly(fos);
                 IOUtil.closeQuietly(inChannel);
                 IOUtil.closeQuietly(fis);
